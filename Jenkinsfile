@@ -2,7 +2,7 @@ pipeline {
     agent {
         label 'AGENT-1'
     }
-    potions{
+    options{
         timeout(time: 10, unit: 'MINUTES')
     }
     stages {
