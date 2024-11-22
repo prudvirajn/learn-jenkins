@@ -7,36 +7,43 @@ pipeline {
         disableConcurrentBuilds()
         //retry(1)
     }
+    environment {
+        DEBUG = 'true'
+    }
+
     parameters {
-    string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-    text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
-    
-    booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
+        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+        text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
 
-    choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
+        booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
 
-    password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
+        choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
+
+        password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
     }
     stages {
         stage('Build') {
             steps {
-                sh  "echo This is Build"
-                //sh sleep 10
+                sh 'echo This is Build'
+                //sh 'sleep 10'
             }
         }
         stage('Test') {
             steps {
-                sh "echo This is Test"
+                sh 'echo This is test'
+                sh 'env'
             }
         }
         stage('Deploy') {
-            when{
-                expression { env.GIT_BRANCH != "origin/main" 
+            when {
+                expression { env.GIT_BRANCH != "origin/main" }
             }
             steps {
-                sh "echo This is Deploy"
-                //error "pipeline failed"
-            } 
+
+                    sh 'echo This is deploy'
+                    //error 'pipeline failed'
+
+            }
         }
         stage('Print Params'){
             steps{
@@ -44,24 +51,24 @@ pipeline {
                 echo "Biography: ${params.BIOGRAPHY}"
                 echo "Toggle: ${params.TOGGLE}"
                 echo "Choice: ${params.CHOICE}"
-            echo "Password: ${params.PASSWORD}"  
+                echo "Password: ${params.PASSWORD}"  
             }
         }
-        
-        stage('Approval'){
-            input {
-                message "Should we continue?"
-                ok "Yes, we should."
-                submitter "alice,bob"
-                parameters {
-                    string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-                }
-            }
-            steps {
-                echo "Hello, ${PERSON}, nice to meet you."
-            }
-        }
+        // stage('Approval'){
+        //     input {
+        //         message "Should we continue?"
+        //         ok "Yes, we should."
+        //         submitter "alice,bob"
+        //         parameters {
+        //             string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+        //         }
+        //     }
+        //     steps {
+        //         echo "Hello, ${PERSON}, nice to meet you."
+        //     }
+        // }
     }
+
     post {
         always{
             echo "This sections runs always"
